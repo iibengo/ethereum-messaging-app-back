@@ -1,0 +1,21 @@
+{
+  "name": "token_holder",
+  "version": "1.0.0",
+  "description": "Contrato de Mensajería Pública",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test"
+  },
+  "keywords": [],
+  "author": "Ion Iñaki Bengoechea",
+  "license": "MIT",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^2.0.2",
+    "@types/jest": "^29.5.2",
+    "chai": "^4.3.7",
+    "dotenv": "^16.0.3",
+    "ethers": "^5.7.2",
+    "hardhat": "^2.14.1",
+    "solidity-coverage": "^0.8.2"
+  }
+}
