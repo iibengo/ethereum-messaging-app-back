@@ -5,6 +5,7 @@ pragma solidity ^0.8.0;
 
 struct UserModel {
     string name;
+    address wallet;
     bool active;
     uint256 created;
 }
@@ -23,7 +24,7 @@ struct MessageUserModel {
 contract PublicMessaging {
     address private owner;
     uint256 private balance;
-    uint256 public totalMessages;
+    uint256 public totalActiveMessages;
     uint256 public fee = 0.01 ether;
     mapping(address => UserModel) private userListByAddressMap;
     mapping(uint256 => MessageModel) private messageLisByIdMap;
@@ -53,15 +54,15 @@ contract PublicMessaging {
             bytes(content).length <= 300,
             "The message exceeds 300 characters"
         );
-        messageLisByIdMap[totalMessages] = MessageModel(
-            totalMessages,
+        messageLisByIdMap[totalActiveMessages] = MessageModel(
+            totalActiveMessages,
             content,
             msg.sender,
             false,
             block.timestamp
         );
-        emit MessageSent(totalMessages, content, msg.sender);
-        totalMessages++;
+        emit MessageSent(totalActiveMessages, content, msg.sender);
+        totalActiveMessages++;
     }
 
     /**
@@ -77,6 +78,7 @@ contract PublicMessaging {
         require(msg.value >= fee, "Insufficient value");
         userListByAddressMap[msg.sender] = UserModel(
             name,
+            msg.sender,
             true,
             block.timestamp
         );
@@ -94,7 +96,8 @@ contract PublicMessaging {
         onlyActiveUser
         returns (uint256)
     {
-        return totalMessages - lastReadMessageIdByUserAddressMap[msg.sender];
+        return
+            totalActiveMessages - lastReadMessageIdByUserAddressMap[msg.sender];
     }
 
     /**
@@ -132,7 +135,7 @@ contract PublicMessaging {
     {
         MessageUserModel[] memory response = getMessageUserModelMap(
             0,
-            totalMessages
+            totalActiveMessages
         );
         return response;
     }
@@ -150,7 +153,7 @@ contract PublicMessaging {
         uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
         MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
             startingIndex,
-            totalMessages
+            totalActiveMessages
         );
         return unreadMessages;
     }
@@ -159,7 +162,32 @@ contract PublicMessaging {
      * @dev Marks all messages of the calling user as read.
      */
     function markUserMessagesAsRead() external onlyActiveUser {
-        lastReadMessageIdByUserAddressMap[msg.sender] = totalMessages;
+        lastReadMessageIdByUserAddressMap[msg.sender] = totalActiveMessages;
+    }
+
+    /**
+     * @dev returns user by address
+     * @param user {address}
+     */
+    function getUser(
+        address user
+    ) external view onlyActiveUser returns (UserModel memory) {
+        require(
+            bytes(userListByAddressMap[user].name).length != 0,
+            "User Not Exist"
+        );
+        return userListByAddressMap[user];
+    }
+
+    /**
+     * @dev changes user name
+     * @param name {string}
+     */
+    function updateUserName(
+        string memory name
+    ) external payable onlyActiveUser {
+        require(msg.value >= 0.001 ether, "Insufficient value");
+        userListByAddressMap[msg.sender].name = name;
     }
 
     /**
@@ -177,7 +205,7 @@ contract PublicMessaging {
         );
         require(!messageLisByIdMap[id].isDeleted, "Message is deleted");
         messageLisByIdMap[id].isDeleted = true;
-        totalMessages--;
+        totalActiveMessages--;
         emit MessageDeleted(id);
     }
 

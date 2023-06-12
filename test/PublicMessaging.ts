@@ -9,6 +9,7 @@ describe("PublicMessaging", () => {
   let user3Connection: Contract;
   let notRegisterUserConnection: Contract;
   let accounts: Signer[];
+  let user2Address: string;
   // Antes de cada prueba, se despliega el contrato "PublicMessaging"
   beforeEach(async () => {
     const PublicMessaging: ContractFactory = await ethers.getContractFactory(
@@ -22,7 +23,7 @@ describe("PublicMessaging", () => {
     user2Connection = ownerConnection.connect(accounts[1]);
     user3Connection = ownerConnection.connect(accounts[2]);
     notRegisterUserConnection = ownerConnection.connect(accounts[3]); // Usuario no registrado
-
+    user2Address = await account2.getAddress();
     //Registrar usuarios
     await ownerConnection.createUser("owner", {
       value: ethers.utils.parseEther("0.1"),
@@ -147,7 +148,6 @@ describe("PublicMessaging", () => {
   });
   describe("disableUser", () => {
     it("should disable user2", async () => {
-      const user2Address = await account2.getAddress();
       await ownerConnection.writeMessage("content");
       let msg = await user2Connection.getUserUnreadMessages();
       expect(msg.length).to.equal(1);
@@ -162,6 +162,17 @@ describe("PublicMessaging", () => {
       const newFee = ethers.utils.parseEther("0.1");
       await ownerConnection.setFee(newFee);
       expect(await ownerConnection.fee()).to.be.equal(newFee);
+    });
+  });
+  describe("updateUserName", () => {
+    it("should change user name", async () => {
+      let user = await user2Connection.getUser(user2Address);
+      expect(user.name).to.equal("user2");
+      await user2Connection.updateUserName("user2-new", {
+        value: ethers.utils.parseEther("0.001"),
+      });
+      user = await user2Connection.getUser(user2Address);
+      expect(user.name).to.equal("user2-new");
     });
   });
   describe("modifiers", () => {
