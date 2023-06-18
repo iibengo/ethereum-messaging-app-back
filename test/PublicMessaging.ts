@@ -10,6 +10,7 @@ describe("PublicMessaging", () => {
   let notRegisterUserConnection: Contract;
   let accounts: Signer[];
   let user2Address: string;
+  let ownerAddress: string;
   // Antes de cada prueba, se despliega el contrato "PublicMessaging"
   beforeEach(async () => {
     const PublicMessaging: ContractFactory = await ethers.getContractFactory(
@@ -24,6 +25,7 @@ describe("PublicMessaging", () => {
     user3Connection = ownerConnection.connect(accounts[2]);
     notRegisterUserConnection = ownerConnection.connect(accounts[3]); // Usuario no registrado
     user2Address = await account2.getAddress();
+    ownerAddress = await owner.getAddress();
     //Registrar usuarios
     await ownerConnection.createUser("owner", {
       value: ethers.utils.parseEther("0.1"),
@@ -60,7 +62,7 @@ describe("PublicMessaging", () => {
     });
   });
 
-  describe("markMessagesAsRead and getUserUnreadMessages", () => {
+  describe("get unread messages and update to read", () => {
     it("should return the correct count of unread messages", async function () {
       await ownerConnection.writeMessage("Message 1");
       await ownerConnection.writeMessage("Message 2");
@@ -76,10 +78,22 @@ describe("PublicMessaging", () => {
       expect(unreadMessages[0].message.content).to.equal(content);
       expect(unreadMessages[0].user.name).to.equal("owner");
     });
+    it("should emmit unread messages", async function () {
+      const content = "Mensaje no leído";
+      await ownerConnection.writeMessage(content);
+      await expect(await ownerConnection.updateUserMessageAsReadAndEmit())
+        .to.emit(ownerConnection, "UnreadUpdated")
+        .withArgs((unreadList: any) => {
+          const noReaded = unreadList[0].message[1];
+          expect(noReaded).to.equal(content);
+          expect(unreadList[0].user[1]).to.equal(ownerAddress);
+          return unreadList;
+        });
+    });
     it("should mark messages as read and not return them", async function () {
       const content = "Mensaje no leído";
       await ownerConnection.writeMessage(content);
-      await ownerConnection.markUserMessagesAsRead();
+      await ownerConnection.updateUserMessageAsReadAndEmit();
       const unreadMessages = await ownerConnection.getUserUnreadMessages();
       expect(unreadMessages.length).to.equal(0);
     });
@@ -87,7 +101,7 @@ describe("PublicMessaging", () => {
       const content = "Mensaje no leído";
       await ownerConnection.writeMessage(content);
       await ownerConnection.writeMessage(content);
-      await ownerConnection.markUserMessagesAsRead();
+      await ownerConnection.updateUserMessageAsReadAndEmit();
       let unreadMessages = await ownerConnection.getUserUnreadMessages();
       expect(unreadMessages.length).to.equal(0);
 
@@ -95,7 +109,7 @@ describe("PublicMessaging", () => {
       await ownerConnection.writeMessage(content);
       const mensajes = await user2Connection.getUserUnreadMessages();
       expect(mensajes.length).to.equal(3);
-      await user2Connection.markUserMessagesAsRead();
+      await user2Connection.updateUserMessageAsReadAndEmit();
       unreadMessages = await user2Connection.getUserUnreadMessages();
       expect(unreadMessages.length).to.equal(0);
 
@@ -190,11 +204,6 @@ describe("PublicMessaging", () => {
       it("getUserUnreadMessages should throw onlyUser error", async () => {
         await expect(
           notRegisterUserConnection.getUserUnreadMessages()
-        ).to.be.rejectedWith("Sender is not authorized");
-      });
-      it("markUserMessagesAsRead should throw onlyUser error", async () => {
-        await expect(
-          notRegisterUserConnection.markUserMessagesAsRead()
         ).to.be.rejectedWith("Sender is not authorized");
       });
       it("deleteMessage should throw onlyUser error", async () => {

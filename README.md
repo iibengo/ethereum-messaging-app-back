@@ -34,7 +34,7 @@ Estas dependencias son fundamentales para el desarrollo del proyecto y se encarg
 
 ## Estructura del Contrato
 
-El contrato principal contiene estructuras de datos para los modelos de usuario y mensaje, así como las principales funciones para interactuar con el contrato.
+El contrato contiene estructuras de datos para los modelos de usuario y mensaje, así como lass funciones para interactuar con el contrato.
 
 ### Estructuras de Datos
 
@@ -72,11 +72,14 @@ El contrato proporciona las siguientes funciones principales:
 5. `getMessageUserModelMap`: Una función interna que se utiliza para obtener un array de `MessageUserModel` (combinación de mensajes y usuarios) dentro de un rango dado de mensajes.
 6. `getAllMessages`: Devuelve todos los mensajes almacenados en el sistema como un array de `MessageUserModel`.
 7. `getUserUnreadMessages`: Devuelve los mensajes no leídos para el usuario que llama a la función como un array de `MessageUserModel`.
-8. `markUserMessagesAsRead`: Marca todos los mensajes del usuario que llama a la función como leídos.
-9. `deleteMessage`: Permite al remitente o al propietario del contrato eliminar un mensaje específico.
-10. `withdrawBalance`: Permite al propietario del contrato retirarel saldo disponible en el contrato.
-11. `disableUser`: Permite al propietario desactivar o activar un usuario existente cambiando su estado activo. 10. `setFee`: Permite al propietario cambiar la tarifa requerida para crear un nuevo usuario.
-12. `setFee`: Cambia la tarifa requerida para crear un nuevo usuario.
+8. `updateUserMessageAsReadAndEmit`: Marca los mensajes no leídos del usuario que llama como leídos y emite un evento de actualización.
+9. `markUserMessagesAsRead`: Marca todos los mensajes del usuario que llama a la función como leídos.
+10. `getUser`: Devuelve la información del usuario correspondiente a la dirección proporcionada.
+11. `updateUserName`: Permite al usuario cambiar su nombre, siempre que se proporcione la tarifa requerida.
+12. `deleteMessage`: Permite al remitente o al propietario del contrato eliminar un mensaje específico.
+13. `withdrawBalance`: Permite al propietario del contrato retirarel saldo disponible en el contrato.
+14. `disableUser`: Permite al propietario desactivar o activar un usuario existente cambiando su estado activo. 14. `setFee`: Permite al propietario cambiar la tarifa requerida para crear un nuevo usuario.
+15. `setFee`: Cambia la tarifa requerida para crear un nuevo usuario.
 
 ### Modificadores
 
@@ -104,23 +107,21 @@ Durante el desarrollo del contrato PublicMessaging, se han considerado las sigui
 
 - **Analisis de seguridad**: Se pueden auditar el contraro con herramintas personalizadas como `slither`, para buscar vulnerabilidades en el contrato y mejorar la seguridad.
 
-- **Optimización del Uso de Memoria**: El contrato actual almacena todos los mensajes y usuarios en mapeos en memoria. A medida que aumenta el número de mensajes y usuarios, esto puede llevar a un aumento en el consumo de gas y retrasos en la ejecución de las funciones. Una posible mejora sería utilizar estructuras de datos más eficientes, como árboles de Merkle o almacenamiento en capas, para optimizar el uso de memoria.
+- **Optimización del Uso de Memoria**: El contrato actual almacena todos los mensajes y usuarios en mapeos en memoria. A medida que aumenta el número de mensajes y usuarios, esto puede llevar a un aumento en el consumo de gas y retrasos en la ejecución de las funciones. Una posible mejora sería gestionar de la paginación de mensajes para reducir la carga de memoria en las funciones que devuelven los mensajes.
 
 - **Funcionalidad de Edición de Mensajes**: Actualmente, los mensajes no se pueden editar una vez que se han escrito. Implementar la capacidad de editar mensajes existentes podría ser una mejora útil, especialmente en situaciones donde los usuarios necesiten corregir errores o actualizar información en los mensajes.
 
-- **Funcionalidades de pago**: Se pueden añadir mas funcionalidades, como cambiar nombre, o editar mensaje que podrian conllevar un costo adicional.
+- **Funcionalidades de pago**: Se pueden añadir mas funcionalidades, como cambiar nombre, o editar mensaje que podrian conllevar un costo adicional. Implementación de una función de pagos para permitir a los usuarios enviar pagos junto con los mensajes.
 
-- **Interfaz de Usuario y Despliegue Web**: Como parte del desarrollo de este contrato, sería beneficioso desarrollar una interfaz de usuario (UI) amigable para que los usuarios interactúen con el contrato de manera más intuitiva. Además, se podría
+- **Interfaz de Usuario y Despliegue Web**: Como parte del desarrollo de este contrato, sería beneficioso desarrollar una interfaz de usuario (UI) amigable para que los usuarios interactúen con el contrato de manera más intuitiva. Además, se podría considerar desplegar el contrato y la interfaz de usuario en una aplicación web para facilitar el acceso y la adopción del sistema de mensajería.
 
-considerar desplegar el contrato y la interfaz de usuario en una aplicación web para facilitar el acceso y la adopción del sistema de mensajería.
+-**Busqueda de mensajes**: Añadir funcionalidad de búsqueda y filtrado de mensajes.
 
 ## Pruebas Unitarias
 
 El contrato `PublicMessaging` ha sido sometido a pruebas unitarias para garantizar su correcto funcionamiento y su comportamiento esperado en diferentes escenarios. Se han utilizado las bibliotecas `ethers` y `chai` para escribir las pruebas y la herramienta `solidity-coverage` para medir la cobertura de código de las pruebas.
 
 Las pruebas unitarias abarcan casos de prueba que verifican la creación de usuarios, el envío de mensajes, la lectura de mensajes no leídos, la eliminación de mensajes, la marcación de mensajes como leídos, la desactivación de usuarios, la retirada de saldo y otros casos de prueba relevantes.
-
-Las pruebas unitarias son fundamentales para garantizar la funcionalidad correcta del contrato y para detectar posibles errores o vulnerabilidades. Al utilizar pruebas unitarias, se aumenta la confianza en la robustez y seguridad del contrato.
 
 ## Conclusiones
 

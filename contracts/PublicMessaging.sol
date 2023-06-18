@@ -37,6 +37,7 @@ contract PublicMessaging {
     event UserCreated(address indexed sender, string name);
     event BalanceWithdrawn(address indexed recipient, uint256 amount);
     event MessageDeleted(uint256 indexed id);
+    event UnreadUpdated(MessageUserModel[]);
 
     /**
      * @dev initialize the owner.
@@ -141,6 +142,14 @@ contract PublicMessaging {
     }
 
     /**
+     * @dev Marks all messages of the calling user as read.
+     * @param user {address}
+     */
+    function updateUserMessagesAsRead(address user) internal {
+        lastReadMessageIdByUserAddressMap[user] = totalActiveMessages;
+    }
+
+    /**
      * @dev Retrieves the unread messages for the calling user.
      * @return MessageUserModel {MessageUserModel[]}
      */
@@ -159,10 +168,16 @@ contract PublicMessaging {
     }
 
     /**
-     * @dev Marks all messages of the calling user as read.
+     * @dev Updates to read the unread messages for the calling user and emits.
      */
-    function markUserMessagesAsRead() external onlyActiveUser {
-        lastReadMessageIdByUserAddressMap[msg.sender] = totalActiveMessages;
+    function updateUserMessageAsReadAndEmit() external onlyActiveUser {
+        uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
+        MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
+            startingIndex,
+            totalActiveMessages
+        );
+        updateUserMessagesAsRead(msg.sender);
+        emit UnreadUpdated(unreadMessages);
     }
 
     /**
