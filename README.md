@@ -2,7 +2,7 @@
 
 ## Ejecutando el proyecto
 
-> Necesitas intalar Nodejs +16
+> Necesitas instalar Nodejs +16
 
 1. Clona el repositorio:
 
