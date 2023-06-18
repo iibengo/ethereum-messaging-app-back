@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Author: Ion Iñaki Bengoechea
-import "../node_modules/hardhat/console.sol";
+
 pragma solidity ^0.8.0;
 
 struct UserModel {
