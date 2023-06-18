@@ -38,7 +38,7 @@ npx hardhat coverage
 
 ## Introducción
 
-En esta practica, hemos desarrollado un contrato inteligente llamado "PublicMessaging" utilizando el lenguaje de programación Solidity y el framework Hardhat. El contrato permite a los usuarios escribir mensajes públicos, crear perfiles de usuario y leer los mensajes enviados por otros usuarios. Además, el contrato incluye funciones para marcar mensajes como leídos, eliminar mensajes y transferir el saldo acumulado al propietario del contrato.
+En esta práctica, hemos desarrollado un contrato inteligente llamado "PublicMessaging" utilizando el lenguaje de programación Solidity y el framework Hardhat. El contrato permite a los usuarios escribir mensajes públicos, crear perfiles de usuario y leer los mensajes enviados por otros usuarios. Además, el contrato incluye funciones para marcar mensajes como leídos, eliminar mensajes y transferir el saldo acumulado al propietario del contrato.
 
 En esta memoria del proyecto, explicaremos las decisiones clave que hemos tomado durante el desarrollo, la estructura del contrato, las funciones implementadas y las posibles mejoras.
 
@@ -68,7 +68,7 @@ Estas dependencias son fundamentales para el desarrollo del proyecto y se encarg
 
 ## Estructura del Contrato
 
-El contrato contiene estructuras de datos para los modelos de usuario y mensaje, así como lass funciones para interactuar con el contrato.
+El contrato contiene estructuras de datos para los modelos de usuario y mensaje, así como las funciones para interactuar con el contrato.
 
 ### Estructuras de Datos
 
@@ -99,7 +99,7 @@ El contrato define tres eventos:
 
 El contrato proporciona las siguientes funciones principales:
 
-1. `constructor`: Se sete el owner con la dirección del deployer del contrato.
+1. `constructor`: Se inicializa el owner con la dirección del deployer del contrato.
 2. `writeMessage`: Permite a un usuario escribir un nuevo mensaje en el sistema. Verifica la longitud del contenido del mensaje y lo almacena en el mapeo `messageListByIdMap`. Además, emite el evento `MessageSent`.
 3. `createUser`: Permite a un usuario crear un nuevo perfil en el sistema de mensajería. Requiere que se pague una tarifa (`fee`) y verifica si el nombre del usuario no está vacío. Almacena el perfil del usuario en el mapeo `userListByAddressMap` y emite el evento `UserCreated`.
 4. `getUserUnreadMessageCount`: Devuelve el número de mensajes no leídos para el usuario que llama a la función.
@@ -111,7 +111,7 @@ El contrato proporciona las siguientes funciones principales:
 10. `getUser`: Devuelve la información del usuario correspondiente a la dirección proporcionada.
 11. `updateUserName`: Permite al usuario cambiar su nombre, siempre que se proporcione la tarifa requerida.
 12. `deleteMessage`: Permite al remitente o al propietario del contrato eliminar un mensaje específico.
-13. `withdrawBalance`: Permite al propietario del contrato retirarel saldo disponible en el contrato.
+13. `withdrawBalance`: Permite al propietario del contrato retirar el saldo disponible en el contrato.
 14. `disableUser`: Permite al propietario desactivar o activar un usuario existente cambiando su estado activo. 14. `setFee`: Permite al propietario cambiar la tarifa requerida para crear un nuevo usuario.
 15. `setFee`: Cambia la tarifa requerida para crear un nuevo usuario.
 
@@ -139,17 +139,17 @@ Durante el desarrollo del contrato PublicMessaging, se han considerado las sigui
 
 - **Uso de librerias seguras**: Se pueden implementar mejoras adicionales en términos de seguridad para garantizar que las operaciones solo puedan ser realizadas por usuarios autorizados. Esto podría incluir la implementación de un sistema de roles más complejo o la utilización de estándares de seguridad como OpenZeppelin.
 
-- **Analisis de seguridad**: Se pueden auditar el contraro con herramintas personalizadas como `slither`, para buscar vulnerabilidades en el contrato y mejorar la seguridad.
+- **Análisis de seguridad**: Se pueden auditar el contraro con herramientas personalizadas como `slither`, para buscar vulnerabilidades en el contrato y mejorar la seguridad.
 
-- **Optimización del Uso de Memoria**: El contrato actual almacena todos los mensajes y usuarios en mapeos en memoria. A medida que aumenta el número de mensajes y usuarios, esto puede llevar a un aumento en el consumo de gas y retrasos en la ejecución de las funciones. Una posible mejora sería gestionar de la paginación de mensajes para reducir la carga de memoria en las funciones que devuelven los mensajes.
+- **Optimización del Uso de Memoria**: El contrato actual almacena todos los mensajes y usuarios en mapeos en memoria. A medida que aumenta el número de mensajes y usuarios, esto puede llevar a un aumento en el consumo de gas y retrasos en la ejecución de las funciones. Una posible mejora sería gestionar la paginación de mensajes para reducir la carga de memoria en las funciones que devuelven los mensajes.
 
 - **Funcionalidad de Edición de Mensajes**: Actualmente, los mensajes no se pueden editar una vez que se han escrito. Implementar la capacidad de editar mensajes existentes podría ser una mejora útil, especialmente en situaciones donde los usuarios necesiten corregir errores o actualizar información en los mensajes.
 
-- **Funcionalidades de pago**: Se pueden añadir mas funcionalidades, como cambiar nombre, o editar mensaje que podrian conllevar un costo adicional. Implementación de una función de pagos para permitir a los usuarios enviar pagos junto con los mensajes.
+- **Funcionalidades de pago**: Se pueden añadir más funcionalidades, como cambiar nombre, o editar mensajes que podrían conllevar un costo adicional. Implementación de una función de pagos para permitir a los usuarios enviar pagos junto con los mensajes.
 
 - **Interfaz de Usuario y Despliegue Web**: Como parte del desarrollo de este contrato, sería beneficioso desarrollar una interfaz de usuario (UI) amigable para que los usuarios interactúen con el contrato de manera más intuitiva. Además, se podría considerar desplegar el contrato y la interfaz de usuario en una aplicación web para facilitar el acceso y la adopción del sistema de mensajería.
 
--**Busqueda de mensajes**: Añadir funcionalidad de búsqueda y filtrado de mensajes.
+-**Búsqueda de mensajes**: Añadir funcionalidad de búsqueda y filtrado de mensajes.
 
 ## Pruebas Unitarias
 
