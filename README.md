@@ -1,5 +1,41 @@
 # Memoria de la practica: Contrato de Mensajería Pública
 
+## Ejecutando el proyecto
+
+> Necesitas intalar Nodejs +16
+
+1. Clona el repositorio:
+
+```bash
+git clone https://github.com/ionilancer/ethereum-messaging-app-back.git
+```
+
+2. Instalar las dependencias:
+
+```bash
+npm install
+```
+
+3. Crea un archivo **.env** con las siguiente variables:
+
+```bash
+
+# url RPC proporcionada por alchemy/infura
+ALCHEMY_ETH_TEST:
+
+# Clave privada de la cartera para los tests
+WALLET_PRIVATE_KEY:
+```
+
+4. Puedes ejecutar los test con el siguiente comando:
+
+```bash
+# Run tests
+npx hardhat test
+# Runt tests with coverage
+npx hardhat coverage
+```
+
 ## Introducción
 
 En esta practica, hemos desarrollado un contrato inteligente llamado "PublicMessaging" utilizando el lenguaje de programación Solidity y el framework Hardhat. El contrato permite a los usuarios escribir mensajes públicos, crear perfiles de usuario y leer los mensajes enviados por otros usuarios. Además, el contrato incluye funciones para marcar mensajes como leídos, eliminar mensajes y transferir el saldo acumulado al propietario del contrato.
@@ -7,8 +43,6 @@ En esta practica, hemos desarrollado un contrato inteligente llamado "PublicMess
 En esta memoria del proyecto, explicaremos las decisiones clave que hemos tomado durante el desarrollo, la estructura del contrato, las funciones implementadas y las posibles mejoras.
 
 El objetivo principal de este proyecto es proporcionar una plataforma de mensajería básica en la cadena de bloques, donde los usuarios puedan interactuar y comunicarse de forma transparente y segura. El contrato se diseñó teniendo en cuenta la simplicidad y la eficiencia en términos de costos de gas y seguridad.
-
-## Elección del Lenguaje y Framework
 
 El proyecto utiliza el framework Hardhat, que proporciona una base sólida para el desarrollo, pruebas y despliegue de contratos inteligentes en Ethereum. También se utilizan algunas dependencias adicionales para las pruebas y la interacción con la cadena de bloques.
 

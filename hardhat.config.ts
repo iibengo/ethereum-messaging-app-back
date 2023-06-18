@@ -7,7 +7,7 @@ const config: HardhatUserConfig = {
   solidity: "0.8.17",
   networks: {
     goerli: {
-      url: process.env.ALCHEMY_URL_SEPORIA,
+      url: process.env.ALCHEMY_ETH_TEST,
       accounts: [process.env.WALLET_PRIVATE_KEY as string],
     },
   },
