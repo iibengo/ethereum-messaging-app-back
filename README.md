@@ -1,4 +1,4 @@
-# Memoria de la practica: Contrato de Mensajería Pública
+# Memoria de la práctica: Contrato de Mensajería Pública
 
 ## Ejecutando el proyecto
 
