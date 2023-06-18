@@ -149,7 +149,7 @@ Durante el desarrollo del contrato PublicMessaging, se han considerado las sigui
 
 - **Interfaz de Usuario y Despliegue Web**: Como parte del desarrollo de este contrato, sería beneficioso desarrollar una interfaz de usuario (UI) amigable para que los usuarios interactúen con el contrato de manera más intuitiva. Además, se podría considerar desplegar el contrato y la interfaz de usuario en una aplicación web para facilitar el acceso y la adopción del sistema de mensajería.
 
--**Búsqueda de mensajes**: Añadir funcionalidad de búsqueda y filtrado de mensajes.
+- **Búsqueda de mensajes**: Añadir funcionalidad de búsqueda y filtrado de mensajes.
 
 ## Pruebas Unitarias
 
