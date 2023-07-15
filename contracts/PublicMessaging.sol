@@ -25,6 +25,7 @@ contract PublicMessaging {
     address private owner;
     uint256 private balance;
     uint256 public totalActiveMessages;
+    uint256 public totalMessages;
     uint256 public fee = 0.01 ether;
     mapping(address => UserModel) private userListByAddressMap;
     mapping(uint256 => MessageModel) private messageLisByIdMap;
@@ -55,15 +56,16 @@ contract PublicMessaging {
             bytes(content).length <= 300,
             "The message exceeds 300 characters"
         );
-        messageLisByIdMap[totalActiveMessages] = MessageModel(
+        messageLisByIdMap[totalMessages] = MessageModel(
             totalActiveMessages,
             content,
             msg.sender,
             false,
             block.timestamp
         );
-        emit MessageSent(totalActiveMessages, content, msg.sender);
+        emit MessageSent(totalMessages, content, msg.sender);
         totalActiveMessages++;
+        totalMessages++;
     }
 
     /**
@@ -136,7 +138,7 @@ contract PublicMessaging {
     {
         MessageUserModel[] memory response = getMessageUserModelMap(
             0,
-            totalActiveMessages
+            totalMessages
         );
         return response;
     }
@@ -182,16 +184,14 @@ contract PublicMessaging {
 
     /**
      * @dev returns user by address
-     * @param user {address}
+     * @param wallet {address}
      */
-    function getUser(
-        address user
-    ) external view onlyActiveUser returns (UserModel memory) {
+    function getUser(address wallet) external view returns (UserModel memory) {
         require(
-            bytes(userListByAddressMap[user].name).length != 0,
+            bytes(userListByAddressMap[wallet].name).length != 0,
             "User Not Exist"
         );
-        return userListByAddressMap[user];
+        return userListByAddressMap[wallet];
     }
 
     /**
