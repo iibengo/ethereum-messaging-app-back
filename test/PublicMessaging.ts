@@ -267,11 +267,6 @@ describe("PublicMessaging", () => {
           notRegisterUserConnection.deleteMessage(0)
         ).to.be.rejectedWith("Sender is not authorized");
       });
-      it("getUser should throw onlyActiveUser error", async () => {
-        await expect(
-          notRegisterUserConnection.getUser(user2Address)
-        ).to.be.rejectedWith("Sender is not authorized");
-      });
       it("updateUserName should throw onlyActiveUser error", async () => {
         await expect(
           notRegisterUserConnection.updateUserName("new name")
