@@ -12,13 +12,17 @@ describe("PublicMessaging", () => {
   let user2Address: string;
   let ownerAddress: string;
   let notRegisteredAddress: String;
+
   // Antes de cada prueba, se despliega el contrato "PublicMessaging"
   beforeEach(async () => {
+    const counterFactory = await ethers.getContractFactory("MessageCounter");
+    const counterContract = await counterFactory.deploy();
     const PublicMessaging: ContractFactory = await ethers.getContractFactory(
       "PublicMessaging"
     );
-    contractConnection = await PublicMessaging.deploy();
+    contractConnection = await PublicMessaging.deploy(counterContract.address);
     await contractConnection.deployed();
+    await counterContract.changeOwner(contractConnection.address);
     accounts = await ethers.getSigners();
     owner = accounts[0];
     account2 = accounts[1];
@@ -224,6 +228,12 @@ describe("PublicMessaging", () => {
       await expect(
         user2Connection.getUser(notRegisteredAddress)
       ).to.be.rejectedWith("User Not Exist");
+    });
+  });
+  describe("getTotalMessages", () => {
+    it("should increase when new message created", async () => {
+      await contractConnection.writeMessage("content");
+      expect(await contractConnection.getTotalMessages()).to.equal(1);
     });
   });
   describe("updateUserName", () => {

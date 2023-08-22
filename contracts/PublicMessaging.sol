@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Author: Ion Iñaki Bengoechea
+import "./MessageCounter.sol";
 
 pragma solidity ^0.8.0;
 
@@ -26,6 +27,8 @@ contract PublicMessaging {
     uint256 private balance;
     uint256 public totalActiveMessages;
     uint256 public totalMessages;
+    MessageCounter public counter;
+
     uint256 public fee = 0.01 ether;
     mapping(address => UserModel) private userListByAddressMap;
     mapping(uint256 => MessageModel) private messageLisByIdMap;
@@ -43,8 +46,9 @@ contract PublicMessaging {
     /**
      * @dev initialize the owner.
      */
-    constructor() {
+    constructor(address counterAddress) {
         owner = msg.sender;
+        counter = MessageCounter(counterAddress);
     }
 
     /**
@@ -64,6 +68,7 @@ contract PublicMessaging {
             block.timestamp
         );
         emit MessageSent(totalMessages, content, msg.sender);
+        counter.increase();
         totalActiveMessages++;
         totalMessages++;
     }
@@ -125,6 +130,14 @@ contract PublicMessaging {
             }
         }
         return messageUserModel;
+    }
+
+    /**
+     * @dev Retrieves all messages.
+     * @return MessageUserModel {MessageUserModel[]}
+     */
+    function getTotalMessages() external view returns (uint256) {
+        return counter.getTotalMessages();
     }
 
     /**
