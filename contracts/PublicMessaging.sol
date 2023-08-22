@@ -26,7 +26,6 @@ contract PublicMessaging {
     address private owner;
     uint256 private balance;
     uint256 public totalActiveMessages;
-    uint256 public totalMessages;
     MessageCounter public counter;
 
     uint256 public fee = 0.01 ether;
@@ -60,17 +59,16 @@ contract PublicMessaging {
             bytes(content).length <= 300,
             "The message exceeds 300 characters"
         );
-        messageLisByIdMap[totalMessages] = MessageModel(
+        messageLisByIdMap[counter.getTotalMessages()] = MessageModel(
             totalActiveMessages,
             content,
             msg.sender,
             false,
             block.timestamp
         );
-        emit MessageSent(totalMessages, content, msg.sender);
+        emit MessageSent(counter.getTotalMessages(), content, msg.sender);
         counter.increase();
         totalActiveMessages++;
-        totalMessages++;
     }
 
     /**
@@ -151,7 +149,7 @@ contract PublicMessaging {
     {
         MessageUserModel[] memory response = getMessageUserModelMap(
             0,
-            totalMessages
+            counter.getTotalMessages()
         );
         return response;
     }

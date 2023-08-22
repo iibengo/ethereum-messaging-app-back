@@ -31,7 +31,7 @@ contract MessageCounter {
      * @dev Retrieves all messages.
      * @return MessageUserModel {MessageUserModel[]}
      */
-    function getTotalMessages() external view returns (uint256) {
+    function getTotalMessages() public view returns (uint256) {
         return messageAmount;
     }
 
