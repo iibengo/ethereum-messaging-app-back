@@ -230,10 +230,10 @@ describe("PublicMessaging", () => {
       ).to.be.rejectedWith("User Not Exist");
     });
   });
-  describe("getActivelMessages", () => {
+  describe("getTotalActiveMessages", () => {
     it("should increase when new message created", async () => {
       await contractConnection.writeMessage("content");
-      expect(await contractConnection.getTotalMessages()).to.equal(1);
+      expect(await contractConnection.getTotalActiveMessages()).to.equal(1);
     });
   });
   describe("updateUserName", () => {

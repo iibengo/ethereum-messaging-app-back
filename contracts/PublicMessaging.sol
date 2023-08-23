@@ -134,8 +134,8 @@ contract PublicMessaging {
      * @dev Retrieves all messages.
      * @return MessageUserModel {MessageUserModel[]}
      */
-    function getTotalMessages() external view returns (uint256) {
-        return counter.getTotalMessages();
+    function getTotalActiveMessages() external view returns (uint256) {
+        return counter.getTotalActiveMessages();
     }
 
     /**
