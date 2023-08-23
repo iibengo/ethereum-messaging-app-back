@@ -12,9 +12,9 @@ describe("MessageCounter", () => {
     contractConnection = await MessageCounter.deploy();
     await contractConnection.deployed();
   });
-  describe("increase", () => {
+  describe("increaseActive", () => {
     it("should emit increased", async () => {
-      await expect(contractConnection.increase()).to.emit(
+      await expect(contractConnection.increaseActive()).to.emit(
         contractConnection,
         "Increased"
       );

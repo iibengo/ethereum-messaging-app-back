@@ -25,7 +25,6 @@ struct MessageUserModel {
 contract PublicMessaging {
     address private owner;
     uint256 private balance;
-    uint256 public totalActiveMessages;
     MessageCounter public counter;
 
     uint256 public fee = 0.01 ether;
@@ -60,15 +59,15 @@ contract PublicMessaging {
             "The message exceeds 300 characters"
         );
         messageLisByIdMap[counter.getTotalMessages()] = MessageModel(
-            totalActiveMessages,
+            counter.getTotalActiveMessages(),
             content,
             msg.sender,
             false,
             block.timestamp
         );
         emit MessageSent(counter.getTotalMessages(), content, msg.sender);
-        counter.increase();
-        totalActiveMessages++;
+        counter.increaseTotal();
+        counter.increaseActive();
     }
 
     /**
@@ -103,7 +102,8 @@ contract PublicMessaging {
         returns (uint256)
     {
         return
-            totalActiveMessages - lastReadMessageIdByUserAddressMap[msg.sender];
+            counter.getTotalActiveMessages() -
+            lastReadMessageIdByUserAddressMap[msg.sender];
     }
 
     /**
@@ -159,7 +159,8 @@ contract PublicMessaging {
      * @param user {address}
      */
     function updateUserMessagesAsRead(address user) internal {
-        lastReadMessageIdByUserAddressMap[user] = totalActiveMessages;
+        lastReadMessageIdByUserAddressMap[user] = counter
+            .getTotalActiveMessages();
     }
 
     /**
@@ -175,7 +176,7 @@ contract PublicMessaging {
         uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
         MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
             startingIndex,
-            totalActiveMessages
+            counter.getTotalActiveMessages()
         );
         return unreadMessages;
     }
@@ -187,7 +188,7 @@ contract PublicMessaging {
         uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
         MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
             startingIndex,
-            totalActiveMessages
+            counter.getTotalActiveMessages()
         );
         updateUserMessagesAsRead(msg.sender);
         emit UnreadUpdated(unreadMessages);
@@ -231,7 +232,7 @@ contract PublicMessaging {
         );
         require(!messageLisByIdMap[id].isDeleted, "Message is deleted");
         messageLisByIdMap[id].isDeleted = true;
-        totalActiveMessages--;
+        counter.decreaseActive();
         emit MessageDeleted(id);
     }
 
