@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 // Author: Ion Iñaki Bengoechea
+import "./MessageCounter.sol";
 
 pragma solidity ^0.8.0;
 
@@ -24,8 +25,8 @@ struct MessageUserModel {
 contract PublicMessaging {
     address private owner;
     uint256 private balance;
-    uint256 public totalActiveMessages;
-    uint256 public totalMessages;
+    MessageCounter public counter;
+
     uint256 public fee = 0.01 ether;
     mapping(address => UserModel) private userListByAddressMap;
     mapping(uint256 => MessageModel) private messageLisByIdMap;
@@ -43,8 +44,9 @@ contract PublicMessaging {
     /**
      * @dev initialize the owner.
      */
-    constructor() {
+    constructor(address counterAddress) {
         owner = msg.sender;
+        counter = MessageCounter(counterAddress);
     }
 
     /**
@@ -56,16 +58,16 @@ contract PublicMessaging {
             bytes(content).length <= 300,
             "The message exceeds 300 characters"
         );
-        messageLisByIdMap[totalMessages] = MessageModel(
-            totalActiveMessages,
+        messageLisByIdMap[counter.getTotalMessages()] = MessageModel(
+            counter.getTotalActiveMessages(),
             content,
             msg.sender,
             false,
             block.timestamp
         );
-        emit MessageSent(totalMessages, content, msg.sender);
-        totalActiveMessages++;
-        totalMessages++;
+        emit MessageSent(counter.getTotalMessages(), content, msg.sender);
+        counter.increaseTotal();
+        counter.increaseActive();
     }
 
     /**
@@ -100,7 +102,8 @@ contract PublicMessaging {
         returns (uint256)
     {
         return
-            totalActiveMessages - lastReadMessageIdByUserAddressMap[msg.sender];
+            counter.getTotalActiveMessages() -
+            lastReadMessageIdByUserAddressMap[msg.sender];
     }
 
     /**
@@ -128,6 +131,14 @@ contract PublicMessaging {
     }
 
     /**
+     * @dev Retrieves all active messages.
+     * @return MessageUserModel {MessageUserModel[]}
+     */
+    function getTotalActiveMessages() external view returns (uint256) {
+        return counter.getTotalActiveMessages();
+    }
+
+    /**
      * @dev Retrieves all messages.
      * @return MessageUserModel {MessageUserModel[]}
      */
@@ -138,7 +149,7 @@ contract PublicMessaging {
     {
         MessageUserModel[] memory response = getMessageUserModelMap(
             0,
-            totalMessages
+            counter.getTotalMessages()
         );
         return response;
     }
@@ -148,7 +159,8 @@ contract PublicMessaging {
      * @param user {address}
      */
     function updateUserMessagesAsRead(address user) internal {
-        lastReadMessageIdByUserAddressMap[user] = totalActiveMessages;
+        lastReadMessageIdByUserAddressMap[user] = counter
+            .getTotalActiveMessages();
     }
 
     /**
@@ -164,7 +176,7 @@ contract PublicMessaging {
         uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
         MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
             startingIndex,
-            totalActiveMessages
+            counter.getTotalActiveMessages()
         );
         return unreadMessages;
     }
@@ -176,7 +188,7 @@ contract PublicMessaging {
         uint256 startingIndex = lastReadMessageIdByUserAddressMap[msg.sender];
         MessageUserModel[] memory unreadMessages = getMessageUserModelMap(
             startingIndex,
-            totalActiveMessages
+            counter.getTotalActiveMessages()
         );
         updateUserMessagesAsRead(msg.sender);
         emit UnreadUpdated(unreadMessages);
@@ -220,7 +232,7 @@ contract PublicMessaging {
         );
         require(!messageLisByIdMap[id].isDeleted, "Message is deleted");
         messageLisByIdMap[id].isDeleted = true;
-        totalActiveMessages--;
+        counter.decreaseActive();
         emit MessageDeleted(id);
     }
 
