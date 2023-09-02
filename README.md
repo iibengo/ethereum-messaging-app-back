@@ -66,7 +66,7 @@ El proyecto utiliza las siguientes dependencias:
 
 Estas dependencias son fundamentales para el desarrollo del proyecto y se encargan de proporcionar las herramientas necesarias para compilar, desplegar y probar el contrato `PublicMessaging.sol`.
 
-## Estructura del Contrato
+## Estructura del Contrato PublicMessaging
 
 El contrato contiene estructuras de datos para los modelos de usuario y mensaje, así como las funciones para interactuar con el contrato.
 
@@ -114,6 +114,7 @@ El contrato proporciona las siguientes funciones principales:
 13. `withdrawBalance`: Permite al propietario del contrato retirar el saldo disponible en el contrato.
 14. `disableUser`: Permite al propietario desactivar o activar un usuario existente cambiando su estado activo. 14. `setFee`: Permite al propietario cambiar la tarifa requerida para crear un nuevo usuario.
 15. `setFee`: Cambia la tarifa requerida para crear un nuevo usuario.
+16. `getTotalActiveMessages`: Retorna los mensajes activos
 
 ### Modificadores
 
@@ -121,6 +122,33 @@ El contrato utiliza dos modificadores:
 
 1. `onlyActiveUser`: Verifica si el remitente de la transacción es un usuario registrado y está activo.
 2. `onlyOwner`: Verifica si el remitente de la transacción es el propietario del contrato.
+
+## Estructura del Contrato messageCounter
+
+Este contrato se utiliza desde el contrato `publicMessaging` para almacenar el total de mensajes del contrato.
+de esta forma se quita complejidad y tamaño al contrato original `publicMessaging`.
+
+Lista de las funciones del contrato `MessageCounter`:
+
+1. `increaseActive()`: Incrementa el contador de mensajes activos. Solo puede ser llamada por el propietario del contrato.
+
+2. `decreaseActive()`: Decrementa el contador de mensajes activos. Solo puede ser llamada por el propietario del contrato.
+
+3. `increaseTotal()`: Incrementa el contador total de mensajes. Solo puede ser llamada por el propietario del contrato.
+
+4. `changeOwner(address newOwner)`: Cambia el propietario del contrato a la dirección proporcionada como `newOwner`. Solo puede ser llamada por el propietario actual del contrato.
+
+5. `getTotalActiveMessages()`: Devuelve el número total de mensajes activos como un valor `uint256`.
+
+6. `getTotalMessages()`: Devuelve el número total de mensajes como un valor `uint256`.
+
+Además de estas funciones, el contrato también incluye un modificador `onlyOwner()` que asegura que ciertas funciones solo puedan ser llamadas por el propietario autorizado del contrato.
+
+### Actualizar publicMessaging
+
+En la implementación actual, el owner debe crear primero el contrato `MessageCounter`, para pasarle su dirección en el contractor de `publicMessaging`.
+Despues debera de actualizar la dirección del owner de `MessageCounter` con la de `publicMessaging`.
+Se ha craedo la fucnión getTotalActiveMessages en publicMessaging para acceder al MessageCounter, ademas de llamar a las funciones de increase y decrease del counter.
 
 ## Aspectos de Seguridad
 
